@@ -5,16 +5,18 @@
   "type": "module",
   "scripts": {
     "build": "remix build",
-    "dev": "remix dev --manual",
+    "dev": "remix dev -c \"node server.mjs\"",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc"
   },
   "dependencies": {
     "@remix-run/css-bundle": "^2.6.0",
+    "@remix-run/express": "^2.6.0",
     "@remix-run/node": "^2.6.0",
     "@remix-run/react": "^2.6.0",
     "@remix-run/serve": "^2.6.0",
+    "express": "^4.18.2",
     "isbot": "^4.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
