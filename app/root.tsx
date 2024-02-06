@@ -1,27 +1,28 @@
-import { Links, LiveReload, Meta, Outlet, Scripts } from "@remix-run/react";
-import { SuperTokensProvider } from "./components/supertokensProvider";
+import {
+  Meta,
+  Links,
+  Scripts,
+  LiveReload,
+  Outlet,
+  ScrollRestoration,
+} from "@remix-run/react";
+import { SuperTokensWrapper } from "supertokens-auth-react";
 
 export default function App() {
   return (
     <html lang="en">
-      {/* Wrap the application with the SuperTokensProvider for authentication */}
-      <SuperTokensProvider>
-        <head>
-          <link rel="icon" href="data:image/x-icon;base64,AA" />
-          <Meta />
-          <Links />
-        </head>
-        <body>
-          <h1>Hello world!</h1>
-          {/* Outlet component to render the nested route content */}
-          <Outlet />
-
-          {/* Scripts component to include JavaScript files */}
+      <head>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <SuperTokensWrapper>
+          <Outlet /> {/* This is where child routes will be rendered */}
+          <ScrollRestoration />
           <Scripts />
-          {/* LiveReload component for automatic page reload during development */}
           <LiveReload />
-        </body>
-      </SuperTokensProvider>
+        </SuperTokensWrapper>
+      </body>
     </html>
   );
 }
