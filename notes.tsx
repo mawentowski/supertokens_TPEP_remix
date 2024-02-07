@@ -12,6 +12,9 @@ const handleCall = getAppDirRequestHandler(Response);
 // Define the action handler function for handling requests
 export async function loader({ request }: LoaderFunctionArgs) {
   // Define the function to create the PartialRemixRequest object
+  // Ensure that SuperTokens is initialized before handling requests
+  console.log("Recieved request, the request looks like:", request);
+
   function createPartialRemixRequest(request: Request) {
     ensureSuperTokensInit();
     return {
@@ -52,10 +55,5 @@ export async function loader({ request }: LoaderFunctionArgs) {
     );
   }
 
-  // Wrap the Remix response in a JavaScript response
-  return new Response(res.body, {
-    status: res.status,
-    statusText: res.statusText,
-    headers: Object.fromEntries(res.headers),
-  });
+  return res;
 }

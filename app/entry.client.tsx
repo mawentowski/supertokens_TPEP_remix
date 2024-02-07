@@ -2,32 +2,13 @@
 
 import { RemixBrowser } from "@remix-run/react";
 import { hydrate } from "react-dom";
-import SuperTokens from "supertokens-auth-react";
-import ThirdPartyEmailPasswordReact from "supertokens-auth-react/recipe/thirdpartyemailpassword";
-import Session from "supertokens-auth-react/recipe/session";
-import { appInfo } from "./appInfo";
-import { SuperTokensConfig } from "supertokens-auth-react/lib/build/types";
+// import SuperTokens from "supertokens-auth-react";
+// import { frontendConfig } from "./config/frontend";
 
-const frontendConfig = (): SuperTokensConfig => {
-  return {
-    appInfo,
-    recipeList: [
-      ThirdPartyEmailPasswordReact.init({
-        signInAndUpFeature: {
-          providers: [
-            ThirdPartyEmailPasswordReact.Google.init(),
-            ThirdPartyEmailPasswordReact.Github.init(),
-            ThirdPartyEmailPasswordReact.Apple.init(),
-          ],
-        },
-      }),
-      Session.init(),
-    ],
-  };
-};
-
-if (typeof window !== "undefined") {
-  SuperTokens.init(frontendConfig());
-}
+// if (typeof window !== "undefined") {
+//   console.log("the type of window is:", typeof window);
+//   console.log("initializing frontendconfig now");
+//   SuperTokens.init(frontendConfig());
+// }
 
 hydrate(<RemixBrowser />, document);
