@@ -6,7 +6,6 @@ import { appInfo } from "./appInfo";
 import { SuperTokensConfig } from "supertokens-auth-react/lib/build/types";
 
 export const frontendConfig = (): SuperTokensConfig => {
-  console.log("starting to initialize the frontend");
   return {
     appInfo,
     recipeList: [

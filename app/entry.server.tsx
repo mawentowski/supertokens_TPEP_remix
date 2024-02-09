@@ -5,8 +5,6 @@ import { RemixServer } from "@remix-run/react";
 import { renderToString } from "react-dom/server";
 import { ensureSuperTokensInit } from "./config/backend";
 
-// Ensure that SuperTokens is initialized
-
 ensureSuperTokensInit();
 
 export default function handleRequest(

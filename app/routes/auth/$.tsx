@@ -5,7 +5,7 @@ import { ThirdPartyEmailPasswordPreBuiltUI } from "supertokens-auth-react/recipe
 export const PreBuiltUIList = [ThirdPartyEmailPasswordPreBuiltUI];
 
 export default function Auth() {
-  // if the user visits a page that is not handled by us (like /auth/random), then we redirect them back to the auth page.
+  // If the user visits a page that is not handled by us (like /auth/random), then we redirect them back to the auth page.
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     if (SuperTokens.canHandleRoute(PreBuiltUIList) === false) {

@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import {
   Meta,
   Links,
@@ -8,18 +7,20 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 import SuperTokens, { SuperTokensWrapper } from "supertokens-auth-react";
-// import { ensureSuperTokensInit } from "./config/backend";
 import { frontendConfig } from "./config/frontend";
-
-// ensureSuperTokensInit();
+import { SessionAuth } from "supertokens-auth-react/recipe/session";
+import { useLocation } from "react-router-dom";
 
 if (typeof window !== "undefined") {
-  console.log("the type of window is:", typeof window);
-  console.log("initializing frontendconfig now");
   SuperTokens.init(frontendConfig());
 }
 
 export default function App() {
+  const location = useLocation();
+  const isUnprotectedRoute =
+    location.pathname.startsWith("/api") ||
+    location.pathname.startsWith("/auth");
+
   return (
     <html lang="en">
       <head>
@@ -28,7 +29,14 @@ export default function App() {
       </head>
       <body>
         <SuperTokensWrapper>
-          <Outlet /> {/* This is where child routes will be rendered */}
+          {isUnprotectedRoute ? (
+            <Outlet />
+          ) : (
+            <SessionAuth>
+              <Outlet />
+            </SessionAuth>
+          )}
+
           <ScrollRestoration />
           <Scripts />
           <LiveReload />

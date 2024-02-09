@@ -6,11 +6,10 @@ import type { TypeInput } from "supertokens-node/types";
 import SuperTokens from "supertokens-node";
 
 export const backendConfig = (): TypeInput => {
-  console.log("INITILIAZING SUPERTOKENS!");
   return {
     supertokens: {
       // this is the location of the SuperTokens core.
-      connectionURI: "http://localhost:3567",
+      connectionURI: "https://try.supertokens.com",
     },
     appInfo: {
       // learn more about this on https://supertokens.com/docs/thirdpartyemailpassword/appinfo
@@ -88,11 +87,8 @@ export const backendConfig = (): TypeInput => {
 
 let initialized = false;
 export function ensureSuperTokensInit() {
-  console.log("check");
   if (!initialized) {
-    console.log("supertokens is not initailized, initailizing now");
     SuperTokens.init(backendConfig());
     initialized = true;
   }
-  console.log("supertokens is initialized - skip");
 }

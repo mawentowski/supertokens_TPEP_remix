@@ -1,61 +1,85 @@
-import { LoaderFunctionArgs } from "react-router-dom";
-import { ensureSuperTokensInit } from "../../../config/backend";
-import { getAppDirRequestHandler } from "~/lib/app-dir-request-handler";
-import { Response } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
+import { ensureSuperTokensInit } from "~/config/backend";
+import { getAppDirRequestHandler } from "supertokens-node/nextjs";
 
-// Ensure that SuperTokens is initialized before handling requests
 ensureSuperTokensInit();
 
-// Get the request handler for the application directory
 const handleCall = getAppDirRequestHandler(Response);
 
-// Define the action handler function for handling requests
-export async function loader({ request }: LoaderFunctionArgs) {
-  // Define the function to create the PartialRemixRequest object
-  function createPartialRemixRequest(request: Request) {
-    ensureSuperTokensInit();
-    return {
-      method: request.method, // Assuming request.method is a string
-      url: request.url, // Assuming request.url is a string
-      headers: request.headers, // Assuming request.headers is a Headers object
-      formData: () => request.formData(), // Assuming request.formData() returns a Promise<FormData>
-      json: () => request.json(), // Assuming request.json() returns a Promise<unknown>
-      cookies: {
-        getAll: () => {
-          // Assuming cookies are accessible from request.headers or a similar property
-          const cookieHeader = request.headers.get("Cookie");
-          if (cookieHeader) {
-            // Parse cookie header and return an array of cookie objects
-            return cookieHeader.split(";").map((cookieString) => {
-              const [name, value] = cookieString.trim().split("=");
-              return { name, value };
-            });
-          } else {
-            return [];
-          }
-        },
-      },
-    };
-  }
+// Type based on the PartialNextRequest type (same properties)
 
-  // Generic request handling logic
-  const req = createPartialRemixRequest(request);
+export type PartialRemixRequest = {
+  method: string;
+  url: string;
+  headers: Headers;
+  formData: () => Promise<FormData>;
+  json: () => Promise<unknown>;
+  cookies: {
+    getAll: () => { name: string; value: string }[];
+  };
+};
 
-  // Call handleCall with the constructed request object
-  const res = await handleCall(req);
+// In Remix, the request lacks the `cookies` property required by getAppDirRequestHandler, so a new object is created to include that property.
 
-  // Add Cache-Control header for GET requests
-  if (request.method === "GET" && !res.headers.has("Cache-Control")) {
-    res.headers.set(
-      "Cache-Control",
-      "no-cache, no-store, max-age=0, must-revalidate"
-    );
-  }
-
-  // Wrap the Remix response in a JavaScript response
-  return new Response(res.body, {
-    status: res.status,
-    statusText: res.statusText,
-    headers: Object.fromEntries(res.headers),
+function createPartialRemixRequest(request: Request): PartialRemixRequest {
+  const headers = new Headers();
+  request.headers.forEach((value, key) => {
+    headers.append(key, value);
   });
+
+  return {
+    method: request.method as string,
+    url: request.url as string,
+    headers: headers,
+    formData: async () => await request.formData(),
+    json: async () => await request.json(),
+    cookies: {
+      getAll: () => {
+        const cookieHeader = request.headers.get("Cookie");
+        if (cookieHeader) {
+          return cookieHeader.split(";").map((cookieString) => {
+            const [name, value] = cookieString.trim().split("=");
+            return { name, value } as { name: string; value: string };
+          });
+        } else {
+          return [];
+        }
+      },
+    },
+  };
+}
+// Action function for handling POST requests
+export async function action({ request }: ActionFunctionArgs) {
+  try {
+    const partialRemixRequest = createPartialRemixRequest(request);
+    const res = await handleCall(partialRemixRequest);
+    return res;
+  } catch (error) {
+    console.error(
+      "The request made to the following url didn't work:",
+      request.url
+    );
+    return json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+// Loader function for handling GET requests that also adds cache control headers
+export async function loader({ request }: LoaderFunctionArgs) {
+  try {
+    const partialRemixRequest = createPartialRemixRequest(request);
+    const res = await handleCall(partialRemixRequest);
+    if (!res.headers.has("Cache-Control")) {
+      res.headers.set(
+        "Cache-Control",
+        "no-cache, no-store, max-age=0, must-revalidate"
+      );
+    }
+    return res;
+  } catch (error) {
+    console.error(
+      "The request made to the following url didn't work:",
+      request.url
+    );
+    return json({ error: "Internal server error" }, { status: 500 });
+  }
 }
