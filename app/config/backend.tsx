@@ -4,6 +4,7 @@ import Dashboard from "supertokens-node/recipe/dashboard";
 import UserRoles from "supertokens-node/recipe/userroles";
 import type { TypeInput } from "supertokens-node/types";
 import SuperTokens from "supertokens-node";
+import { appInfo } from "./appInfo";
 
 export const backendConfig = (): TypeInput => {
   return {
@@ -11,15 +12,7 @@ export const backendConfig = (): TypeInput => {
       // this is the location of the SuperTokens core.
       connectionURI: "https://try.supertokens.com",
     },
-    appInfo: {
-      // learn more about this on https://supertokens.com/docs/thirdpartyemailpassword/appinfo
-      appName: "my-remix-app",
-      apiDomain: "http://localhost:3000",
-      websiteDomain: "http://localhost:3000",
-      apiBasePath: "/api/auth",
-      websiteBasePath: "/auth",
-    },
-
+    appInfo: appInfo,
     recipeList: [
       ThirdPartyEmailPasswordNode.init({
         providers: [
