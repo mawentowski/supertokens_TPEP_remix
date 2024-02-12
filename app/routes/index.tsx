@@ -1,4 +1,3 @@
-import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import { signOut } from "supertokens-auth-react/recipe/thirdpartyemailpassword";
 
 export default function Home() {
@@ -8,11 +7,9 @@ export default function Home() {
   }
 
   return (
-    <SessionAuth>
-      <div>
-        <h1>Welcome to the Home Page!</h1>
-        <button onClick={onLogout}>Logout</button>
-      </div>
-    </SessionAuth>
+    <div>
+      <h1>Welcome to the Home Page!</h1>
+      <button onClick={onLogout}>Logout</button>
+    </div>
   );
 }
