@@ -17,9 +17,7 @@ if (typeof window !== "undefined") {
 
 export default function App() {
   const location = useLocation();
-  const isUnprotectedRoute =
-    location.pathname.startsWith("/api") ||
-    location.pathname.startsWith("/auth");
+  const isUnprotectedRoute = location.pathname.startsWith("/auth");
 
   return (
     <html lang="en">
